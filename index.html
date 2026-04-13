@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Pomodoro</title>
+    <!-- Google Fonts: Barlow Condensed for bold condensed sans, Inter for light subtitle/UI -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #fafbfc;
+            /* Subtle bright background */
+            color: #0a2463;
+            overflow: hidden;
+        }
+
+        /* Ethereal Blur Aurora Mesh */
+        .aurora-mesh {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: #fffafa;
+            /* Base soft canvas */
+        }
+
+        /* The horizontal light reflection at the center */
+        .light-reflection {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            transform: translateY(-50%);
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 40%, rgba(255, 255, 255, 0.9) 60%, transparent 100%);
+            filter: blur(25px);
+            z-index: 1;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+
+        /* Smooth flowing blobs */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            /* extreme ethereal blur */
+            opacity: 0.85;
+            animation: moveSlowly 25s infinite alternate ease-in-out;
+            mix-blend-mode: multiply;
+            /* Multiplies smoothly on a light bg */
+            will-change: transform;
+        }
+
+        .blob-1 {
+            width: 60vw;
+            height: 60vw;
+            background: #ffdcb8;
+            /* Pastel Peach */
+            top: -15vh;
+            left: -10vw;
+            animation-duration: 25s;
+        }
+
+        .blob-2 {
+            width: 70vw;
+            height: 70vw;
+            background: #ffc4d9;
+            /* Blush Pink */
+            bottom: -20vh;
+            right: -10vw;
+            animation-duration: 28s;
+            animation-direction: alternate-reverse;
+        }
+
+        .blob-3 {
+            width: 55vw;
+            height: 55vw;
+            background: #e0c4ff;
+            /* Lavender */
+            top: 30vh;
+            left: 35vw;
+            animation-duration: 32s;
+        }
+
+        .blob-4 {
+            width: 65vw;
+            height: 65vw;
+            background: #c4e0ff;
+            /* Powder Blue */
+            bottom: 5vh;
+            left: -5vw;
+            animation-duration: 35s;
+        }
+
+        @keyframes moveSlowly {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: translate(6vw, 6vh) scale(1.1) rotate(45deg);
+            }
+
+            100% {
+                transform: translate(-6vw, 15vh) scale(1.05) rotate(-20deg);
+            }
+        }
+
+        /* Minimal Layout Container */
+        .minimal-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Large Bold Condensed Headline */
+        h1 {
+            font-family: 'Barlow Condensed', sans-serif;
+            margin: 0;
+            font-weight: 700;
+            font-size: 8rem;
+            letter-spacing: 0px;
+            /* tight tracking */
+            color: #0a2463;
+            /* deep cobalt blue */
+            text-transform: uppercase;
+            line-height: 0.9;
+            mix-blend-mode: multiply;
+            /* seamlessly blend the text with the pastel background */
+            opacity: 0.95;
+            text-shadow: 0 10px 30px rgba(10, 36, 99, 0.1);
+        }
+
+        /* Small Light Subtitle Text */
+        .subtitle {
+            font-weight: 400;
+            font-size: 0.8rem;
+            letter-spacing: 5px;
+            color: #0a2463;
+            text-transform: uppercase;
+            margin-top: 24px;
+            margin-bottom: 50px;
+            opacity: 0.6;
+        }
+
+        /* Mode Selection UI */
+        .mode-toggles {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: rgba(10, 36, 99, 0.4);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            padding: 8px 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .mode-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0%;
+            height: 2px;
+            background: #0a2463;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .mode-btn:hover {
+            color: rgba(10, 36, 99, 0.7);
+        }
+
+        .mode-btn.active {
+            color: #0a2463;
+        }
+
+        .mode-btn.active::after {
+            width: 100%;
+        }
+
+        /* minimal timer display using barlow condensed */
+        .time-display {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 110px;
+            letter-spacing: 0px;
+            color: #0a2463;
+            line-height: 1;
+            margin-bottom: 50px;
+            mix-blend-mode: multiply;
+        }
+
+        /* glassmorphism button */
+        .main-btn {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: #0a2463;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            padding: 18px 50px;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.8);
+            border-left: 1px solid rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            text-transform: normal;
+            box-shadow:
+                0 8px 32px rgba(10, 36, 99, 0.1),
+                inset 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .main-btn:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 15px 35px rgba(10, 36, 99, 0.15),
+                inset 0 0 20px rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.9);
+            border-left: 1px solid rgba(255, 255, 255, 0.9);
+        }
+
+        .main-btn:active {
+            transform: translateY(1px);
+            box-shadow:
+                0 5px 15px rgba(10, 36, 99, 0.05),
+                inset 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.08;
+            /* Much lighter grain so it doesn't destroy the pastels */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            mix-blend-mode: multiply;
+        }
+
+        .bg-illustration {
+            position: absolute;
+            right: 0%;
+            bottom: -5%;
+            width: 80vh;
+            height: 100vh;
+            background: url('flowers.png') no-repeat bottom right;
+            background-size: 100%;
+            z-index: -1;
+            pointer-events: none;
+            transition: transform 0.2s cubic-bezier(0.1, 0, 0.3, 1);
+            opacity: 0.8;
+            filter: blur(2px);
+            mix-blend-mode: darken;
+            /* Darken often works better than multiply for slightly off-white backgrounds */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="aurora-mesh">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+        <div class="light-reflection"></div>
+    </div>
+
+    <div class="grain"></div>
+
+    <div class="bg-illustration"></div>
+
+    <div class="minimal-container">
+        <h1>Focus</h1>
+        <div class="subtitle">Energy flows where intention goes</div>
+
+        <div class="mode-toggles">
+            <button class="mode-btn active" id="pomodoro-mode" data-time="1500">Focus</button>
+            <button class="mode-btn" id="short-break-mode" data-time="300">Short Break</button>
+            <button class="mode-btn" id="long-break-mode" data-time="900">Long Break</button>
+        </div>
+
+        <div class="time-display" id="time-left">25:00</div>
+
+        <button class="main-btn" id="start-btn">START</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
